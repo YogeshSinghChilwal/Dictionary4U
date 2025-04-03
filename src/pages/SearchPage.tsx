@@ -9,14 +9,19 @@ import {
 } from "@/components/ui/card";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import ClipLoader from "react-spinners/ClipLoader";
-import { useTheme } from "@/components/ThemeProvider";
+import { useAuth0 } from "@auth0/auth0-react";
+import { useUpdateMyUserHistory } from "@/api/MyUserApi";
+import UserHistoryPage from "./UserHistoryPage";
+import { DynamicProgress } from "@/components/DynamicProcess";
+import { useQueryClient } from "@tanstack/react-query";
 
 const SearchPage = () => {
   const { value } = useParams();
-  const [data, setData] = useState<any[]>([]); // Adjust type based on the fetched data structure
+  const [data, setData] = useState<any[]>([]); // Adjust type based on the fetched data structure :- todo
+  const { isAuthenticated } = useAuth0();
+  const { updateHistory } = useUpdateMyUserHistory();
+  const queryClient = useQueryClient();
 
-  const { theme } = useTheme();
   if (!value) {
     return <div>Please provide a word to search.</div>;
   }
@@ -26,18 +31,26 @@ const SearchPage = () => {
   useEffect(() => {
     if (fetchedValue) {
       setData(fetchedValue);
+
+      if (isAuthenticated && fetchedValue.length > 0) {
+        const newEntry = {
+          word: fetchedValue[0]?.word,
+          meaning: fetchedValue[0]?.meanings?.[0]?.definitions?.[0]?.definition,
+        };
+
+        updateHistory(newEntry)
+          .then(() =>
+            queryClient.invalidateQueries({ queryKey: ["userHistory"] })
+          )
+          .catch((err) => console.error("Error updating user history:", err));
+      }
     }
   }, [fetchedValue, value]);
 
   if (isLoading) {
     return (
       <div className="flex justify-center items-center">
-        <ClipLoader
-          color={`${theme === "light" ? "black" : "white"}`}
-          size={100}
-          speedMultiplier={1}
-          cssOverride={{ borderWidth: "6px" }}
-        />
+        <DynamicProgress isLoading={isLoading} />
       </div>
     );
   }
@@ -102,6 +115,7 @@ const SearchPage = () => {
               </p>
             </CardContent>
           </Card>
+          {isAuthenticated && <UserHistoryPage />}
         </>
       ) : (
         <div className="flex justify-center items-center">

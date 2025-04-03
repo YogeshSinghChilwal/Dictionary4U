@@ -1,4 +1,4 @@
-import { Moon, Sun } from "lucide-react"
+import { Moon, Sun, TreePine } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -27,6 +27,12 @@ export function ModeToggle() {
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("dark")}>
           Dark
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("green")}>
+          Forest
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("pastel")}>
+          Pastel
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("system")}>
           System

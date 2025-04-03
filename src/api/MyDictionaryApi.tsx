@@ -4,7 +4,7 @@ import { toast } from "sonner";
 const API_BASE_URL = import.meta.env.VITE_FREE_DICTIONARY_API;
 
 export const useFetchMyWord = (value: string) => {
-  const fetchValue = async (): Promise<any> => { // Replace `any` with the expected data type
+  const fetchValue = async (): Promise<any> => {      //TODO Replace `any` with the expected data type
     const response = await fetch(`${API_BASE_URL}${value}`);
     if (!response.ok) {
       throw new Error("Failed to fetch value");

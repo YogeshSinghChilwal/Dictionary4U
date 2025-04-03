@@ -1,11 +1,14 @@
 import Navbar from "@/components/Navbar"
 import SearchBar from "@/components/SearchBar"
+import LoginButton from "./LoginButton"
+import {useAuth0} from '@auth0/auth0-react'
 
 type Props = {
   children: React.ReactNode
 }
 
 const Layout = ({children}: Props) => {
+  const {isAuthenticated} = useAuth0()
   return (
     <div className="h-screen max-w-full mt-6 mx-10">
         <div>
@@ -15,6 +18,9 @@ const Layout = ({children}: Props) => {
         <SearchBar/>
         </div>
         <div className="mt-10">{children}</div>
+        <div className="mt-3 flex justify-center items-center">
+          {!isAuthenticated && <LoginButton/>}
+        </div>
     </div>
   )
 }
